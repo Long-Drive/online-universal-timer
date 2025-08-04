@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Universal Timer</title>
+  <!-- Font Awesome CDN for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -44,6 +46,25 @@
     }
     .visible {
       display: block;
+    }
+    button i {
+      margin-right: 0.3em;
+    }
+    button {
+      cursor: pointer;
+      border: 1px solid #007BFF;
+      background: #fff;
+      color: #007BFF;
+      border-radius: 6px;
+      transition: background 0.2s, color 0.2s;
+    }
+    button:hover, button:active, button:focus {
+      background: #007BFF;
+      color: #fff;
+    }
+    input[type="number"], input[type="text"], input[type="datetime-local"] {
+      border: 1px solid #aaa;
+      border-radius: 5px;
     }
   </style>
 </head>
@@ -140,7 +161,7 @@
     function renderCountdown() {
       timerControls.innerHTML = `
         <input type="number" id="countdownInput" placeholder="Seconds" min="1">
-        <button onclick="startCountdown()">Start</button>`;
+        <button onclick="startCountdown()"><i class="fa fa-play"></i>Start</button>`;
       timerDisplay.textContent = '';
     }
 
@@ -166,9 +187,9 @@
     // Stopwatch
     function renderStopwatch() {
       timerControls.innerHTML = `
-        <button onclick="startStopwatch()">Start</button>
-        <button onclick="stopStopwatch()">Stop</button>
-        <button onclick="resetStopwatch()">Reset</button>`;
+        <button onclick="startStopwatch()"><i class="fa fa-play"></i></button>
+        <button onclick="stopStopwatch()"><i class="fa fa-pause"></i></button>
+        <button onclick="resetStopwatch()"><i class="fa fa-rotate-left"></i></button>`;
       timerDisplay.textContent = '0s';
       window.swTime = 0;
     }
@@ -197,7 +218,7 @@
         <input type="number" id="hiitWork" placeholder="Work (sec)" min="1">
         <input type="number" id="hiitRest" placeholder="Rest (sec)" min="1">
         <input type="number" id="hiitRounds" placeholder="Rounds" min="1">
-        <button onclick="startHIIT()">Start</button>`;
+        <button onclick="startHIIT()"><i class="fa fa-play"></i></button>`;
       timerDisplay.textContent = '';
     }
 
@@ -241,7 +262,7 @@
         <input type="number" id="pomoWork" placeholder="Work (min)" min="1">
         <input type="number" id="pomoBreak" placeholder="Break (min)" min="1">
         <input type="number" id="pomoRounds" placeholder="Rounds" min="1">
-        <button onclick="startPomodoro()">Start</button>`;
+        <button onclick="startPomodoro()"><i class="fa fa-play"></i></button>`;
       timerDisplay.textContent = '';
     }
 
@@ -285,9 +306,9 @@
     function renderChess() {
       timerControls.innerHTML = `
         <input type="number" id="chessTime" placeholder="Minutes per player" min="1">
-        <button onclick="startChess()">Start</button>
+        <button onclick="startChess()"><i class="fa fa-play"></i></button>
         <br>
-        <button onclick="switchChessPlayer()" disabled id="switchBtn">Switch Player</button>
+        <button onclick="switchChessPlayer()" disabled id="switchBtn"><i class="fa fa-rotate"></i> Switch Player</button>
       `;
       timerDisplay.textContent = '';
       window.chess = {active: null, times: [0,0], intervals: [null,null], running: false};
@@ -331,7 +352,7 @@
     function renderEventCountdown() {
       timerControls.innerHTML = `
         <input type="datetime-local" id="eventTime">
-        <button onclick="startEventCountdown()">Start</button>`;
+        <button onclick="startEventCountdown()"><i class="fa fa-play"></i></button>`;
       timerDisplay.textContent = '';
     }
     function startEventCountdown() {
@@ -356,7 +377,7 @@
         <input type="number" id="tabataWork" placeholder="Work (sec)" min="1">
         <input type="number" id="tabataRest" placeholder="Rest (sec)" min="1">
         <input type="number" id="tabataRounds" placeholder="Rounds" min="1">
-        <button onclick="startTabata()">Start</button>`;
+        <button onclick="startTabata()"><i class="fa fa-play"></i></button>`;
       timerDisplay.textContent = '';
     }
     function startTabata() {
@@ -380,7 +401,7 @@
     function renderCustomInterval() {
       timerControls.innerHTML = `
         <input type="text" id="customPattern" placeholder="Pattern (e.g. 10,5,10)">
-        <button onclick="startCustomInterval()">Start</button>`;
+        <button onclick="startCustomInterval()"><i class="fa fa-play"></i></button>`;
       timerDisplay.textContent = '';
     }
     function startCustomInterval() {
@@ -403,7 +424,7 @@
     function renderPresentation() {
       timerControls.innerHTML = `
         <input type="number" id="presTime" placeholder="Total minutes" min="1">
-        <button onclick="startPresentation()">Start</button>`;
+        <button onclick="startPresentation()"><i class="fa fa-play"></i></button>`;
       timerDisplay.textContent = '';
     }
     function startPresentation() {
@@ -425,7 +446,7 @@
         <input type="number" id="hold" placeholder="Hold (sec)" min="0">
         <input type="number" id="exhale" placeholder="Exhale (sec)" min="1">
         <input type="number" id="cycles" placeholder="Cycles" min="1">
-        <button onclick="startBreathing()">Start</button>`;
+        <button onclick="startBreathing()"><i class="fa fa-play"></i></button>`;
       timerDisplay.textContent = '';
     }
     function startBreathing() {
@@ -459,7 +480,7 @@
       timerControls.innerHTML = `
         <input type="number" id="soundInterval" placeholder="Interval (sec)" min="1">
         <input type="number" id="soundRepeats" placeholder="Repeats" min="1">
-        <button onclick="startSoundLoop()">Start</button>`;
+        <button onclick="startSoundLoop()"><i class="fa fa-play"></i></button>`;
       timerDisplay.textContent = '';
     }
     function startSoundLoop() {
