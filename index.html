@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -137,6 +136,7 @@
       }
     }
 
+    // Countdown Timer
     function renderCountdown() {
       timerControls.innerHTML = `
         <input type="number" id="countdownInput" placeholder="Seconds" min="1">
@@ -163,6 +163,7 @@
       }, 1000);
     }
 
+    // Stopwatch
     function renderStopwatch() {
       timerControls.innerHTML = `
         <button onclick="startStopwatch()">Start</button>
@@ -190,6 +191,7 @@
       timerDisplay.textContent = '0s';
     }
 
+    // HIIT Interval Timer
     function renderHIIT() {
       timerControls.innerHTML = `
         <input type="number" id="hiitWork" placeholder="Work (sec)" min="1">
@@ -233,6 +235,7 @@
       }, 1000);
     }
 
+    // Pomodoro Timer
     function renderPomodoro() {
       timerControls.innerHTML = `
         <input type="number" id="pomoWork" placeholder="Work (min)" min="1">
@@ -278,35 +281,200 @@
       }, 1000);
     }
 
-    // === Placeholders for remaining timer types ===
-
+    // Chess Clock
     function renderChess() {
-      timerControls.innerHTML = `<p>Chess Clock coming soon!</p>`;
+      timerControls.innerHTML = `
+        <input type="number" id="chessTime" placeholder="Minutes per player" min="1">
+        <button onclick="startChess()">Start</button>
+        <br>
+        <button onclick="switchChessPlayer()" disabled id="switchBtn">Switch Player</button>
+      `;
       timerDisplay.textContent = '';
+      window.chess = {active: null, times: [0,0], intervals: [null,null], running: false};
     }
+
+    function startChess() {
+      let mins = parseInt(document.getElementById('chessTime').value);
+      if (isNaN(mins) || mins < 1) return alert('Please enter minutes for each player.');
+      window.chess.times = [mins*60, mins*60];
+      window.chess.active = 0;
+      window.chess.running = true;
+      document.getElementById('switchBtn').disabled = false;
+      updateChessDisplay();
+      runChessTimers();
+    }
+    function switchChessPlayer() {
+      if (!window.chess.running) return;
+      window.chess.active = window.chess.active === 0 ? 1 : 0;
+      runChessTimers();
+    }
+    function runChessTimers() {
+      clearInterval(window.chess.intervals[0]); clearInterval(window.chess.intervals[1]);
+      let act = window.chess.active;
+      window.chess.intervals[act] = setInterval(() => {
+        window.chess.times[act]--;
+        updateChessDisplay();
+        if(window.chess.times[act]<=0){
+          clearInterval(window.chess.intervals[0]);clearInterval(window.chess.intervals[1]);
+          timerDisplay.textContent = `Player ${act+1} time's up!`;
+          window.chess.running = false;
+          document.getElementById('switchBtn').disabled = true;
+        }
+      },1000);
+    }
+    function updateChessDisplay() {
+      let format = t => `${Math.floor(t/60)}m ${t%60}s`;
+      timerDisplay.textContent = `Player 1: ${format(window.chess.times[0])} | Player 2: ${format(window.chess.times[1])}`;
+    }
+
+    // Event Countdown
     function renderEventCountdown() {
-      timerControls.innerHTML = `<p>Event Countdown coming soon!</p>`;
+      timerControls.innerHTML = `
+        <input type="datetime-local" id="eventTime">
+        <button onclick="startEventCountdown()">Start</button>`;
       timerDisplay.textContent = '';
     }
+    function startEventCountdown() {
+      let date = new Date(document.getElementById('eventTime').value);
+      if (isNaN(date.getTime())) return alert('Please select a valid date and time.');
+      clearInterval(window.timer);
+      window.timer = setInterval(() => {
+        let diff = Math.floor((date.getTime() - Date.now())/1000);
+        if (diff <= 0) {
+          clearInterval(window.timer);
+          timerDisplay.textContent = "Event started!";
+          return;
+        }
+        let d = Math.floor(diff/86400), h = Math.floor((diff%86400)/3600), m = Math.floor((diff%3600)/60), s = diff%60;
+        timerDisplay.textContent = `${d}d ${h}h ${m}m ${s}s left`;
+      },1000);
+    }
+
+    // Tabata Timer
     function renderTabata() {
-      timerControls.innerHTML = `<p>Tabata Timer coming soon!</p>`;
+      timerControls.innerHTML = `
+        <input type="number" id="tabataWork" placeholder="Work (sec)" min="1">
+        <input type="number" id="tabataRest" placeholder="Rest (sec)" min="1">
+        <input type="number" id="tabataRounds" placeholder="Rounds" min="1">
+        <button onclick="startTabata()">Start</button>`;
       timerDisplay.textContent = '';
     }
+    function startTabata() {
+      let work = parseInt(document.getElementById('tabataWork').value);
+      let rest = parseInt(document.getElementById('tabataRest').value);
+      let rounds = parseInt(document.getElementById('tabataRounds').value);
+      if ([work, rest, rounds].some(v => isNaN(v) || v < 1)) return alert('Please enter valid values.');
+      let current = 1, mode = 'Work', time = work;
+      clearInterval(window.timer);
+      window.timer = setInterval(() => {
+        timerDisplay.textContent = `Round ${current} - ${mode}: ${time}s`;
+        time--;
+        if (time < 0) {
+          if (mode === 'Work') { mode = 'Rest'; time = rest; }
+          else { current++; if (current > rounds) { clearInterval(window.timer); timerDisplay.textContent = "Tabata complete!"; return;} mode = 'Work'; time = work;}
+        }
+      },1000);
+    }
+
+    // Custom Interval Timer
     function renderCustomInterval() {
-      timerControls.innerHTML = `<p>Custom Interval Timer coming soon!</p>`;
+      timerControls.innerHTML = `
+        <input type="text" id="customPattern" placeholder="Pattern (e.g. 10,5,10)">
+        <button onclick="startCustomInterval()">Start</button>`;
       timerDisplay.textContent = '';
     }
+    function startCustomInterval() {
+      let pattern = document.getElementById('customPattern').value.split(',').map(x=>parseInt(x.trim()));
+      if (!pattern.length || pattern.some(isNaN)) return alert('Enter a comma-separated list of seconds.');
+      let idx = 0, time = pattern[0];
+      clearInterval(window.timer);
+      window.timer = setInterval(()=>{
+        timerDisplay.textContent = `Interval ${idx+1}: ${time}s`;
+        time--;
+        if(time<0){
+          idx++;
+          if(idx >= pattern.length){ clearInterval(window.timer); timerDisplay.textContent = "Custom intervals complete!"; return;}
+          time = pattern[idx];
+        }
+      },1000);
+    }
+
+    // Presentation Timer
     function renderPresentation() {
-      timerControls.innerHTML = `<p>Presentation Timer coming soon!</p>`;
+      timerControls.innerHTML = `
+        <input type="number" id="presTime" placeholder="Total minutes" min="1">
+        <button onclick="startPresentation()">Start</button>`;
       timerDisplay.textContent = '';
     }
+    function startPresentation() {
+      let time = parseInt(document.getElementById('presTime').value)*60;
+      if(isNaN(time)||time<1)return alert('Enter total minutes.');
+      clearInterval(window.timer);
+      window.timer = setInterval(()=>{
+        let min = Math.floor(time/60), sec = time%60;
+        timerDisplay.textContent = `Time left: ${min}m ${sec}s`;
+        time--;
+        if(time<0){clearInterval(window.timer);timerDisplay.textContent="Presentation time is up!";}
+      },1000);
+    }
+
+    // Breathing Timer
     function renderBreathing() {
-      timerControls.innerHTML = `<p>Breathing Timer coming soon!</p>`;
+      timerControls.innerHTML = `
+        <input type="number" id="inhale" placeholder="Inhale (sec)" min="1">
+        <input type="number" id="hold" placeholder="Hold (sec)" min="0">
+        <input type="number" id="exhale" placeholder="Exhale (sec)" min="1">
+        <input type="number" id="cycles" placeholder="Cycles" min="1">
+        <button onclick="startBreathing()">Start</button>`;
       timerDisplay.textContent = '';
     }
+    function startBreathing() {
+      let inhale = parseInt(document.getElementById('inhale').value);
+      let hold = parseInt(document.getElementById('hold').value);
+      let exhale = parseInt(document.getElementById('exhale').value);
+      let cycles = parseInt(document.getElementById('cycles').value);
+      if ([inhale, hold, exhale, cycles].some(v=>isNaN(v)||v<0) || inhale < 1 || exhale < 1 || cycles < 1)
+        return alert('Enter valid numbers.');
+      let steps = [];
+      for(let i=0; i<cycles; i++){
+        steps.push({label:'Inhale',time:inhale});
+        if(hold) steps.push({label:'Hold',time:hold});
+        steps.push({label:'Exhale',time:exhale});
+      }
+      let idx = 0, t = steps[0].time;
+      clearInterval(window.timer);
+      window.timer = setInterval(()=>{
+        timerDisplay.textContent = `${steps[idx].label}: ${t}s`;
+        t--;
+        if(t<0){
+          idx++;
+          if(idx>=steps.length){clearInterval(window.timer);timerDisplay.textContent="Breathing complete!";return;}
+          t = steps[idx].time;
+        }
+      },1000);
+    }
+
+    // Repeating Sound Timer
     function renderSoundLoop() {
-      timerControls.innerHTML = `<p>Repeating Sound Timer coming soon!</p>`;
+      timerControls.innerHTML = `
+        <input type="number" id="soundInterval" placeholder="Interval (sec)" min="1">
+        <input type="number" id="soundRepeats" placeholder="Repeats" min="1">
+        <button onclick="startSoundLoop()">Start</button>`;
       timerDisplay.textContent = '';
+    }
+    function startSoundLoop() {
+      let interval = parseInt(document.getElementById('soundInterval').value);
+      let repeats = parseInt(document.getElementById('soundRepeats').value);
+      if(isNaN(interval)||interval<1||isNaN(repeats)||repeats<1)return alert('Enter valid values.');
+      let count = 0;
+      clearInterval(window.timer);
+      window.timer = setInterval(()=>{
+        timerDisplay.textContent = `Play sound! (${count+1}/${repeats})`;
+        // Optionally: play a beep
+        if(window.Audio) new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play();
+        count++;
+        if(count>=repeats){clearInterval(window.timer);timerDisplay.textContent="Sound loop complete!";}
+      },interval*1000);
     }
   </script>
 </body>
