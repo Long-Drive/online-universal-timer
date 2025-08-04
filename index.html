@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,6 +55,7 @@
   <main>
     <label for="timerType">Select Timer:</label>
     <select id="timerType">
+      <option value="">-- Select --</option>
       <option value="countdown">Countdown / Egg Timer</option>
       <option value="stopwatch">Stopwatch</option>
       <option value="hiit">HIIT Interval Timer</option>
@@ -84,6 +84,18 @@
       const type = timerType.value;
       timerDisplay.innerHTML = '';
       timerControls.innerHTML = '';
+      clearInterval(window.timer);
+
+      if (!type) {
+        timerDisplay.textContent = 'Select a timer type to begin';
+        timerDisplay.classList.add('visible');
+        timerControls.classList.remove('visible');
+        return;
+      }
+
+      timerDisplay.classList.add('visible');
+      timerControls.classList.add('visible');
+
       switch (type) {
         case 'countdown':
           renderCountdown();
@@ -120,19 +132,24 @@
           break;
         default:
           timerDisplay.textContent = 'Select a timer type to begin';
+          timerControls.innerHTML = '';
       }
     }
 
     function renderCountdown() {
-      timerControls.innerHTML = \`
+      timerControls.innerHTML = `
         <input type="number" id="countdownInput" placeholder="Seconds" min="1">
-        <button onclick="startCountdown()">Start</button>\`;
+        <button onclick="startCountdown()">Start</button>`;
       timerDisplay.textContent = '';
     }
 
     function startCountdown() {
       const input = document.getElementById('countdownInput').value;
       let time = parseInt(input);
+      if (isNaN(time) || time < 1) {
+        alert('Please enter a valid number of seconds.');
+        return;
+      }
       clearInterval(window.timer);
       window.timer = setInterval(() => {
         if (time <= 0) {
@@ -146,10 +163,10 @@
     }
 
     function renderStopwatch() {
-      timerControls.innerHTML = \`
+      timerControls.innerHTML = `
         <button onclick="startStopwatch()">Start</button>
         <button onclick="stopStopwatch()">Stop</button>
-        <button onclick="resetStopwatch()">Reset</button>\`;
+        <button onclick="resetStopwatch()">Reset</button>`;
       timerDisplay.textContent = '0s';
       window.swTime = 0;
     }
@@ -173,24 +190,29 @@
     }
 
     function renderHIIT() {
-      timerControls.innerHTML = \`
-        <input type="number" id="hiitWork" placeholder="Work (sec)">
-        <input type="number" id="hiitRest" placeholder="Rest (sec)">
-        <input type="number" id="hiitRounds" placeholder="Rounds">
-        <button onclick="startHIIT()">Start</button>\`;
+      timerControls.innerHTML = `
+        <input type="number" id="hiitWork" placeholder="Work (sec)" min="1">
+        <input type="number" id="hiitRest" placeholder="Rest (sec)" min="1">
+        <input type="number" id="hiitRounds" placeholder="Rounds" min="1">
+        <button onclick="startHIIT()">Start</button>`;
+      timerDisplay.textContent = '';
     }
 
     function startHIIT() {
       let work = parseInt(document.getElementById('hiitWork').value);
       let rest = parseInt(document.getElementById('hiitRest').value);
       let rounds = parseInt(document.getElementById('hiitRounds').value);
+      if ([work, rest, rounds].some(v => isNaN(v) || v < 1)) {
+        alert('Please enter valid positive numbers for work, rest, and rounds.');
+        return;
+      }
       let current = 1;
       let mode = 'Work';
       let time = work;
 
       clearInterval(window.timer);
       window.timer = setInterval(() => {
-        timerDisplay.textContent = \`Round \${current} - \${mode}: \${time}s\`;
+        timerDisplay.textContent = `Round ${current} - ${mode}: ${time}s`;
         time--;
         if (time < 0) {
           if (mode === 'Work') {
@@ -211,17 +233,22 @@
     }
 
     function renderPomodoro() {
-      timerControls.innerHTML = \`
-        <input type="number" id="pomoWork" placeholder="Work (min)">
-        <input type="number" id="pomoBreak" placeholder="Break (min)">
-        <input type="number" id="pomoRounds" placeholder="Rounds">
-        <button onclick="startPomodoro()">Start</button>\`;
+      timerControls.innerHTML = `
+        <input type="number" id="pomoWork" placeholder="Work (min)" min="1">
+        <input type="number" id="pomoBreak" placeholder="Break (min)" min="1">
+        <input type="number" id="pomoRounds" placeholder="Rounds" min="1">
+        <button onclick="startPomodoro()">Start</button>`;
+      timerDisplay.textContent = '';
     }
 
     function startPomodoro() {
       let work = parseInt(document.getElementById('pomoWork').value) * 60;
       let rest = parseInt(document.getElementById('pomoBreak').value) * 60;
       let rounds = parseInt(document.getElementById('pomoRounds').value);
+      if ([work, rest, rounds].some(v => isNaN(v) || v < 1)) {
+        alert('Please enter valid positive numbers for work, break, and rounds.');
+        return;
+      }
       let current = 1;
       let mode = 'Work';
       let time = work;
@@ -230,7 +257,7 @@
       window.timer = setInterval(() => {
         const min = Math.floor(time / 60);
         const sec = time % 60;
-        timerDisplay.textContent = \`Round \${current} - \${mode}: \${min}m \${sec}s\`;
+        timerDisplay.textContent = `Round ${current} - ${mode}: ${min}m ${sec}s`;
         time--;
         if (time < 0) {
           if (mode === 'Work') {
@@ -251,213 +278,6 @@
     }
 
     function renderChess() {
-      timerControls.innerHTML = \`
-        <input type="number" id="chessTime" placeholder="Minutes per player">
-        <button onclick="startChess()">Start</button>\`;
-    }
-
-    function startChess() {
-      let time1 = parseInt(document.getElementById('chessTime').value) * 60;
-      let time2 = time1;
-      let active = 1;
-
-      const updateDisplay = () => {
-        const t1 = \`Player 1: \${Math.floor(time1/60)}m \${time1%60}s\`;
-        const t2 = \`Player 2: \${Math.floor(time2/60)}m \${time2%60}s\`;
-        timerDisplay.innerHTML = t1 + " | " + t2;
-      };
-
-      clearInterval(window.timer);
-      updateDisplay();
-
-      window.timer = setInterval(() => {
-        if (active === 1) time1--;
-        else time2--;
-        if (time1 <= 0 || time2 <= 0) {
-          clearInterval(window.timer);
-          timerDisplay.textContent = "Game over!";
-          return;
-        }
-        updateDisplay();
-      }, 1000);
-
-      timerControls.innerHTML += '<button onclick="switchPlayer()">Switch Turn</button>';
-      window.switchPlayer = () => { active = active === 1 ? 2 : 1; };
-    }
-
-    function renderEventCountdown() {
-      timerControls.innerHTML = \`
-        <input type="datetime-local" id="eventTime">
-        <button onclick="startEventCountdown()">Start</button>\`;
-    }
-
-    function startEventCountdown() {
-      const end = new Date(document.getElementById('eventTime').value);
-      clearInterval(window.timer);
-      window.timer = setInterval(() => {
-        const now = new Date();
-        let diff = Math.floor((end - now) / 1000);
-        if (diff <= 0) {
-          clearInterval(window.timer);
-          timerDisplay.textContent = "Event started!";
-          return;
-        }
-        const d = Math.floor(diff / 86400);
-        const h = Math.floor((diff % 86400) / 3600);
-        const m = Math.floor((diff % 3600) / 60);
-        const s = diff % 60;
-        timerDisplay.textContent = \`\${d}d \${h}h \${m}m \${s}s remaining\`;
-      }, 1000);
-    }
-
-    function 
-    renderTabata() {
-      timerControls.innerHTML = \`
-        <input type="number" id="tabataRounds" placeholder="Rounds (e.g. 8)">
-        <button onclick="startTabata()">Start</button>\`;
-    
-      
-    function startTabata() {
-      let work = 20;
-      let rest = 10;
-      let rounds = parseInt(document.getElementById('tabataRounds').value);
-      let current = 1;
-      let mode = 'Work';
-      let time = work;
-
-      clearInterval(window.timer);
-      window.timer = setInterval(() => {
-        timerDisplay.textContent = \`Round \${current} - \${mode}: \${time}s\`;
-        time--;
-        if (time < 0) {
-          if (mode === 'Work') {
-            mode = 'Rest';
-            time = rest;
-          } else {
-            current++;
-            if (current > rounds) {
-              clearInterval(window.timer);
-              timerDisplay.textContent = "Tabata complete!";
-              return;
-            }
-            mode = 'Work';
-            time = work;
-          }
-        }
-      }, 1000);
-    }
-    
-    }
-
-    function 
-    renderCustomInterval() {
-      timerControls.innerHTML = \`
-        <input type="number" id="customWork" placeholder="Work (sec)">
-        <input type="number" id="customRest" placeholder="Rest (sec)">
-        <input type="number" id="customRounds" placeholder="Rounds">
-        <button onclick="startCustomInterval()">Start</button>\`;
-    
-      
-    function startCustomInterval() {
-      let work = parseInt(document.getElementById('customWork').value);
-      let rest = parseInt(document.getElementById('customRest').value);
-      let rounds = parseInt(document.getElementById('customRounds').value);
-      let current = 1;
-      let mode = 'Work';
-      let time = work;
-
-      clearInterval(window.timer);
-      window.timer = setInterval(() => {
-        timerDisplay.textContent = \`Round \${current} - \${mode}: \${time}s\`;
-        time--;
-        if (time < 0) {
-          if (mode === 'Work') {
-            mode = 'Rest';
-            time = rest;
-          } else {
-            current++;
-            if (current > rounds) {
-              clearInterval(window.timer);
-              timerDisplay.textContent = "Custom timer complete!";
-              return;
-            }
-            mode = 'Work';
-            time = work;
-          }
-        }
-      }, 1000);
-    }
-    
-    }
-
-    function 
-    renderPresentation() {
-      timerControls.innerHTML = \`
-        <input type="number" id="presentationTime" placeholder="Minutes">
-        <button onclick="startPresentation()">Start</button>\`;
-    
-      
-    function startPresentation() {
-      let time = parseInt(document.getElementById('presentationTime').value) * 60;
-      clearInterval(window.timer);
-      window.timer = setInterval(() => {
-        const m = Math.floor(time / 60);
-        const s = time % 60;
-        timerDisplay.textContent = \`\${m}m \${s}s remaining\`;
-        time--;
-        if (time < 0) {
-          clearInterval(window.timer);
-          timerDisplay.textContent = "Time's up!";
-        }
-      }, 1000);
-    }
-    
-    }
-
-    function 
-    renderBreathing() {
-      timerControls.innerHTML = \`
-        <button onclick="startBreathing()">Start</button>\`;
-    
-      
-    function startBreathing() {
-      let phases = ['Breathe In', 'Hold', 'Breathe Out'];
-      let times = [4, 7, 8];
-      let index = 0;
-      let time = times[index];
-
-      clearInterval(window.timer);
-      timerDisplay.textContent = phases[index] + ': ' + time + 's';
-
-      window.timer = setInterval(() => {
-        time--;
-        if (time < 0) {
-          index = (index + 1) % phases.length;
-          time = times[index];
-        }
-        timerDisplay.textContent = phases[index] + ': ' + time + 's';
-      }, 1000);
-    }
-    
-    }
-
-    function 
-    renderSoundLoop() {
-      timerControls.innerHTML = \`
-        <input type="number" id="loopInterval" placeholder="Interval (sec)">
-        <button onclick="startSoundLoop()">Start</button>\`;
-    
-      
-    function startSoundLoop() {
-      let interval = parseInt(document.getElementById('loopInterval').value);
-      clearInterval(window.timer);
-      timerDisplay.textContent = 'Repeating every ' + interval + 's';
-      window.timer = setInterval(() => {
-        alert('Beep!');
-      }, interval * 1000);
-    }
-    
-    }
-  </script>
-</body>
-</html>
+      timerControls.innerHTML = `
+        <input type="number" id="chessTime" placeholder="Minutes per player" min="1">
+        <button onclick="startChess()">
