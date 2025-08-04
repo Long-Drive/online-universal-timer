@@ -310,24 +310,153 @@
       }, 1000);
     }
 
-    function renderTabata() {
-      document.getElementById('timerDisplay').textContent = 'Tabata is like HIIT: 20s work, 10s rest x 8 rounds.';
+    function 
+    renderTabata() {
+      timerControls.innerHTML = \`
+        <input type="number" id="tabataRounds" placeholder="Rounds (e.g. 8)">
+        <button onclick="startTabata()">Start</button>\`;
+    
+      
+    function startTabata() {
+      let work = 20;
+      let rest = 10;
+      let rounds = parseInt(document.getElementById('tabataRounds').value);
+      let current = 1;
+      let mode = 'Work';
+      let time = work;
+
+      clearInterval(window.timer);
+      window.timer = setInterval(() => {
+        timerDisplay.textContent = \`Round \${current} - \${mode}: \${time}s\`;
+        time--;
+        if (time < 0) {
+          if (mode === 'Work') {
+            mode = 'Rest';
+            time = rest;
+          } else {
+            current++;
+            if (current > rounds) {
+              clearInterval(window.timer);
+              timerDisplay.textContent = "Tabata complete!";
+              return;
+            }
+            mode = 'Work';
+            time = work;
+          }
+        }
+      }, 1000);
+    }
+    
     }
 
-    function renderCustomInterval() {
-      document.getElementById('timerDisplay').textContent = 'Custom interval timer coming soon.';
+    function 
+    renderCustomInterval() {
+      timerControls.innerHTML = \`
+        <input type="number" id="customWork" placeholder="Work (sec)">
+        <input type="number" id="customRest" placeholder="Rest (sec)">
+        <input type="number" id="customRounds" placeholder="Rounds">
+        <button onclick="startCustomInterval()">Start</button>\`;
+    
+      
+    function startCustomInterval() {
+      let work = parseInt(document.getElementById('customWork').value);
+      let rest = parseInt(document.getElementById('customRest').value);
+      let rounds = parseInt(document.getElementById('customRounds').value);
+      let current = 1;
+      let mode = 'Work';
+      let time = work;
+
+      clearInterval(window.timer);
+      window.timer = setInterval(() => {
+        timerDisplay.textContent = \`Round \${current} - \${mode}: \${time}s\`;
+        time--;
+        if (time < 0) {
+          if (mode === 'Work') {
+            mode = 'Rest';
+            time = rest;
+          } else {
+            current++;
+            if (current > rounds) {
+              clearInterval(window.timer);
+              timerDisplay.textContent = "Custom timer complete!";
+              return;
+            }
+            mode = 'Work';
+            time = work;
+          }
+        }
+      }, 1000);
+    }
+    
     }
 
-    function renderPresentation() {
-      document.getElementById('timerDisplay').textContent = 'Presentation timer coming soon.';
+    function 
+    renderPresentation() {
+      timerControls.innerHTML = \`
+        <input type="number" id="presentationTime" placeholder="Minutes">
+        <button onclick="startPresentation()">Start</button>\`;
+    
+      
+    function startPresentation() {
+      let time = parseInt(document.getElementById('presentationTime').value) * 60;
+      clearInterval(window.timer);
+      window.timer = setInterval(() => {
+        const m = Math.floor(time / 60);
+        const s = time % 60;
+        timerDisplay.textContent = \`\${m}m \${s}s remaining\`;
+        time--;
+        if (time < 0) {
+          clearInterval(window.timer);
+          timerDisplay.textContent = "Time's up!";
+        }
+      }, 1000);
+    }
+    
     }
 
-    function renderBreathing() {
-      document.getElementById('timerDisplay').textContent = 'Breathing timer coming soon.';
+    function 
+    renderBreathing() {
+      timerControls.innerHTML = \`
+        <button onclick="startBreathing()">Start</button>\`;
+    
+      
+    function startBreathing() {
+      let phases = ['Breathe In', 'Hold', 'Breathe Out'];
+      let times = [4, 7, 8];
+      let index = 0;
+      let time = times[index];
+
+      clearInterval(window.timer);
+      timerDisplay.textContent = phases[index] + ': ' + time + 's';
+
+      window.timer = setInterval(() => {
+        time--;
+        if (time < 0) {
+          index = (index + 1) % phases.length;
+          time = times[index];
+        }
+        timerDisplay.textContent = phases[index] + ': ' + time + 's';
+      }, 1000);
+    }
+    
     }
 
-    function renderSoundLoop() {
-      document.getElementById('timerDisplay').textContent = 'Repeating sound timer coming soon.';
+    function 
+    renderSoundLoop() {
+      timerControls.innerHTML = \`
+        <input type="number" id="loopInterval" placeholder="Interval (sec)">
+        <button onclick="startSoundLoop()">Start</button>\`;
+    
+      
+    function startSoundLoop() {
+      let interval = parseInt(document.getElementById('loopInterval').value);
+      clearInterval(window.timer);
+      timerDisplay.textContent = 'Repeating every ' + interval + 's';
+      window.timer = setInterval(() => {
+        alert('Beep!');
+      }, interval * 1000);
+    }
+    
     }
   </script>
 </body>
