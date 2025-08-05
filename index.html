@@ -86,6 +86,7 @@
       <option value="presentation">Presentation Timer</option>
       <option value="breathing">Breathing Timer</option>
       <option value="soundloop">Repeating Sound Timer</option>
+      <option value="random">Random Timer</option>
     </select>
     <div id="timerDisplay" class="timer-section visible" role="status" aria-live="polite">Select a timer type to begin</div>
     <form id="timerControls" class="timer-section" aria-label="Timer Controls"></form>
@@ -133,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     presentation: renderPresentation,
     breathing: renderBreathing,
     soundloop: renderSoundLoop,
+    random: renderRandom
   };
 
   // Countdown Timer
@@ -212,17 +214,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Pomodoro Timer
   function renderPomodoro() {
     timerControls.innerHTML = `
-      <label>Work (min):</label><input type="number" id="pomoWork" min="1">
-      <label>Break (min):</label><input type="number" id="pomoBreak" min="1">
-      <label>Rounds:</label><input type="number" id="pomoRounds" min="1">
+      <label>Work (min):</label><input type="number" id="pomodoroWork" min="1">
+      <label>Rest (min):</label><input type="number" id="pomodoroRest" min="1">
+      <label>Rounds:</label><input type="number" id="pomodoroRounds" min="1">
       <button id="startPomodoro"><i class="fa fa-play"></i>Start</button>`;
     document.getElementById('startPomodoro').addEventListener('click', (e) => {
       e.preventDefault();
-      let work = parseInt(document.getElementById('pomoWork').value, 10) * 60;
-      let rest = parseInt(document.getElementById('pomoBreak').value, 10) * 60;
-      let rounds = parseInt(document.getElementById('pomoRounds').value, 10);
+      let work = parseInt(document.getElementById('pomodoroWork').value, 10) * 60;
+      let rest = parseInt(document.getElementById('pomodoroRest').value, 10) * 60;
+      let rounds = parseInt(document.getElementById('pomodoroRounds').value, 10);
       if ([work, rest, rounds].some(v => isNaN(v) || v < 1))
-        return showFeedback('Please enter valid positive numbers for work, break, and rounds.', true);
+        return showFeedback('Please enter valid values.', true);
       showFeedback('');
       let current = 1, mode = 'Work', time = work;
       clearTimer();
@@ -436,6 +438,49 @@ document.addEventListener('DOMContentLoaded', () => {
       },interval*1000);
     });
   }
+
+  // Random Timer
+  function renderRandom() {
+    timerControls.innerHTML = `
+      <label>Min Interval (sec):</label>
+      <input type="number" id="randomMin" min="1" value="5">
+      <label>Max Interval (sec):</label>
+      <input type="number" id="randomMax" min="1" value="30">
+      <label>Rounds:</label>
+      <input type="number" id="randomRounds" min="1" value="5">
+      <button id="startRandom"><i class="fa fa-play"></i>Start</button>
+    `;
+    document.getElementById('startRandom').addEventListener('click', (e) => {
+      e.preventDefault();
+      let min = parseInt(document.getElementById('randomMin').value, 10);
+      let max = parseInt(document.getElementById('randomMax').value, 10);
+      let rounds = parseInt(document.getElementById('randomRounds').value, 10);
+      if ([min, max, rounds].some(v => isNaN(v) || v < 1) || min > max) {
+        return showFeedback('Enter valid min/max (min ≤ max) and rounds.', true);
+      }
+      showFeedback('');
+      clearTimer();
+      let current = 1;
+      function nextRound() {
+        if (current > rounds) {
+          timerDisplay.textContent = "Random timer complete!";
+          return;
+        }
+        let duration = Math.floor(Math.random()*(max-min+1)) + min;
+        timerDisplay.textContent = `Round ${current}/${rounds}: ${duration}s (Surprise coming!)`;
+        timer = setTimeout(() => {
+          timerDisplay.textContent = `Round ${current}/${rounds}: Surprise!`;
+          if(window.Audio) new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play();
+          setTimeout(() => {
+            current++;
+            nextRound();
+          }, 1200);
+        }, duration*1000);
+      }
+      nextRound();
+    });
+  }
+
 });
   </script>
 </body>
