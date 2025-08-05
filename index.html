@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Random Timer
+  // Random Timer (updated to count down)
   function renderRandom() {
     timerControls.innerHTML = `
       <label>Min Interval (sec):</label>
@@ -461,23 +461,35 @@ document.addEventListener('DOMContentLoaded', () => {
       showFeedback('');
       clearTimer();
       let current = 1;
-      function nextRound() {
+
+      function startRandomInterval() {
         if (current > rounds) {
           timerDisplay.textContent = "Random timer complete!";
           return;
         }
         let duration = Math.floor(Math.random()*(max-min+1)) + min;
-        timerDisplay.textContent = `Round ${current}/${rounds}: ${duration}s (Surprise coming!)`;
-        timer = setTimeout(() => {
-          timerDisplay.textContent = `Round ${current}/${rounds}: Surprise!`;
-          if(window.Audio) new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play();
-          setTimeout(() => {
-            current++;
-            nextRound();
-          }, 1200);
-        }, duration*1000);
+        let timeLeft = duration;
+
+        timerDisplay.textContent = `Round ${current}/${rounds}: ${timeLeft}s`;
+
+        clearTimer();
+        timer = setInterval(() => {
+          timeLeft--;
+          if (timeLeft > 0) {
+            timerDisplay.textContent = `Round ${current}/${rounds}: ${timeLeft}s`;
+          } else {
+            clearTimer();
+            timerDisplay.textContent = `Round ${current}/${rounds}: Surprise!`;
+            if(window.Audio) new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play();
+            setTimeout(() => {
+              current++;
+              startRandomInterval();
+            }, 1200);
+          }
+        }, 1000);
       }
-      nextRound();
+
+      startRandomInterval();
     });
   }
 
