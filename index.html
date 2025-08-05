@@ -24,207 +24,141 @@
       --primary-dark: #1976d2;
       --background: #181a1b;
       --foreground: #f9f9f9;
-      --accent: #ff5252;
-      --success: #00e676;
-      --input-bg: #232527;
-      --progress-bg: #333;
+      --input-bg: #232323;
+      --progress-bg: #282e33;
       --progress-fg: #90caf9;
     }
     html, body {
-      height: 100%;
-    }
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
       background: var(--background);
       color: var(--foreground);
-      text-align: center;
-      min-height: 100dvh;
-      transition: background 0.3s, color 0.3s;
-      display: flex; flex-direction: column; min-height: 100vh;
+      margin: 0; padding: 0;
+      font-family: system-ui, sans-serif;
+      height: 100%; min-height: 100vh;
     }
     header {
       background: var(--primary);
       color: #fff;
-      padding: 2rem 1rem 1rem;
+      padding: 1.2em 0.7em 0.7em 0.7em;
+      text-align: center;
       position: relative;
     }
-    #darkToggle {
-      position: absolute; 
-      top: 1rem; 
-      right: 1rem;
+    header h1 { margin: 0; }
+    header button {
       background: none;
-      color: #fff;
       border: none;
-      font-size: 1.5rem;
+      color: #fff;
+      font-size: 1.3em;
+      position: absolute;
+      top: 1em;
+      right: 1em;
       cursor: pointer;
     }
     main {
-      padding: 2rem;
-      flex: 1 1 auto;
-      width: 100%;
-      max-width: 520px;
-      margin: 0 auto;
-      box-sizing: border-box;
-    }
-    select, input, button {
-      font-size: 1.12rem;
-      padding: 0.7rem;
-      margin: 0.5rem;
-      border-radius: 8px;
-      border: 1px solid var(--primary);
+      max-width: 400px;
+      margin: 2em auto 0 auto;
       background: var(--input-bg);
-      color: var(--foreground);
-      transition: background 0.2s, color 0.2s, border 0.2s;
-    }
-    button i {
-      margin-right: 0.3em;
-    }
-    button {
-      border: 1px solid var(--primary);
-      background: var(--input-bg);
-      color: var(--primary);
-      transition: background 0.2s, color 0.2s;
-      cursor: pointer;
-      min-width: 44px;
-      min-height: 44px;
-      position: relative;
-    }
-    button:hover, button:active, button:focus {
-      background: var(--primary);
-      color: #fff;
-      outline: none;
-    }
-    .input-row {
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      gap: 0.25em;
-      margin-bottom: 0.5em;
-    }
-    .incdec-btn {
-      font-size: 1.25rem;
-      width: 2.2em;
-      height: 2.2em;
-      border-radius: 50%;
-      border: 1px solid var(--primary-light);
-      background: var(--input-bg);
-      color: var(--primary);
-      margin: 0;
-      padding: 0;
-      line-height: 2em;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .incdec-btn:active, .incdec-btn:focus {
-      background: var(--primary);
-      color: #fff;
-    }
-    input[type="number"], input[type="text"], input[type="datetime-local"] {
-      border: 1px solid #aaa;
-      border-radius: 8px;
-      width: 7em;
-      background: var(--input-bg);
-      color: var(--foreground);
+      border-radius: 10px;
+      box-shadow: 0 3px 20px #0001;
+      padding: 2em 1.2em 2em 1.2em;
     }
     label {
-      font-weight: 500;
-      margin: 0 0.2em;
+      display: block;
+      margin-bottom: 0.35em;
+      font-weight: 600;
     }
-    #timerDisplay {
-      font-size: 2rem;
-      margin: 2rem 0 1rem 0;
-      min-height: 2.5em;
-      transition: color 0.2s;
+    select, input[type="number"], input[type="text"] {
+      width: 100%;
+      font-size: 1em;
+      margin-bottom: 1.2em;
+      padding: 0.3em 0.5em;
+      border-radius: 6px;
+      border: 1px solid #bbb;
+      background: var(--input-bg);
+      color: var(--foreground);
+      box-sizing: border-box;
+    }
+    button {
+      background: var(--primary);
+      color: #fff;
+      font-size: 1em;
+      border: none;
+      padding: 0.5em 1.2em;
+      border-radius: 6px;
+      margin-right: 0.7em;
+      margin-top: 1em;
+      cursor: pointer;
+      transition: background 0.25s;
+    }
+    button:hover, button:focus {
+      background: var(--primary-dark);
     }
     .timer-section {
+      margin: 1.3em 0 1.5em 0;
       display: none;
     }
-    .visible {
+    .timer-section.visible {
       display: block;
     }
-    .feedback {
-      color: var(--accent);
-      font-weight: bold;
-      margin-top: 1rem;
-    }
-    .feedback:not(.error) {
-      color: var(--success);
-    }
     .progress-bar-wrap {
-      width: 100%;
-      max-width: 360px;
-      margin: 1em auto 1.5em auto;
       background: var(--progress-bg);
-      border-radius: 8px;
-      height: 1.1em;
+      border-radius: 6px;
+      margin: 1.2em 0 0.5em 0;
+      height: 1.2em;
+      width: 100%;
       overflow: hidden;
-      box-shadow: 0 1px 4px 0 #0002;
-      position: relative;
+      display: block;
     }
     .progress-bar-inner {
       background: var(--progress-fg);
       height: 100%;
-      width: 0%;
-      transition: width 0.5s linear;
-      border-radius: 8px 0 0 8px;
+      width: 0;
+      transition: width 0.2s;
     }
-    #presetBar {
-      margin: 1em 0;
+    .feedback {
+      color: var(--accent);
+      min-height: 1.2em;
+      margin-top: 0.6em;
+      font-size: 1em;
+      font-weight: 500;
     }
-    #presetBar button {
-      font-size: 0.95em;
-      padding: 0.4em 1.1em;
-      margin: 0.1em;
-      border-radius: 4px;
+    @media (max-width: 500px) {
+      main { padding: 1em 0.4em 2em 0.4em; }
+    }
+    .incdec-btn {
+      border-radius: 50%;
+      width: 2em;
+      height: 2em;
+      border: none;
+      background: #d7e8f7;
+      color: var(--primary-dark);
+      font-size: 1.1em;
+      margin: 0 0.25em;
       vertical-align: middle;
     }
-    #presetBar input[type="text"] {
-      width: 8em;
-      margin-right: 0.5em;
+    .incdec-btn:hover {
+      background: #acd6fa;
     }
     .tooltip {
       border-bottom: 1px dotted var(--primary);
       cursor: help;
-      text-decoration: none;
-      color: inherit;
       position: relative;
     }
-    .tooltip:hover::after, .tooltip:focus::after {
+    .tooltip[data-tip]:hover:after {
       content: attr(data-tip);
       position: absolute;
-      left: 50%;
-      top: 135%;
-      transform: translateX(-50%);
-      background: #222;
-      color: #fff;
-      padding: 0.3em 0.7em;
-      border-radius: 6px;
-      font-size: 0.93em;
+      background: #fff;
+      color: #222;
+      border: 1px solid #888;
+      border-radius: 8px;
+      left: 0;
+      top: 1.6em;
       white-space: pre;
-      z-index: 100;
-      width: max-content;
-      max-width: 260px;
-      text-align: left;
-    }
-    @media (max-width: 640px) {
-      main {
-        padding: 1rem 0.2rem;
-        font-size: 1.05em;
-      }
-      #timerDisplay {
-        font-size: 1.38rem;
-      }
-      .progress-bar-wrap { height: 1.6em; }
-      select, input, button {
-        font-size: 1em;
-        padding: 0.54em;
-      }
-      .incdec-btn {
-        font-size: 1.15rem;
-        width: 2em;
-        height: 2em;
-      }
+      padding: 0.5em 0.8em;
+      z-index: 50;
+      box-shadow: 0 4px 16px #0002;
+      font-size: 0.97em;
+      min-width: 220px;
+      max-width: 350px;
     }
   </style>
 </head>
@@ -314,7 +248,6 @@
       const val = timerTypeSelect.value;
       timerDesc.textContent = timerDescriptions[val] || '';
     });
-    // --- END TOOLTIP ---
 
     // --- UTILITY FUNCTIONS ---
     function parseFlexibleTime(str) {
@@ -357,73 +290,30 @@
     })();
     function showFeedback(msg, isError = false) {
       feedback.textContent = msg;
-      feedback.className = isError ? 'feedback error' : 'feedback';
+      feedback.style.color = isError ? 'var(--accent)' : 'var(--success)';
     }
     function showProgress(ratio) {
-      progressWrap.style.display = "block";
-      progressInner.style.width = (100*ratio).toFixed(1) + "%";
+      progressWrap.style.display = '';
+      progressInner.style.width = `${Math.max(0,Math.min(1,ratio))*100}%`;
     }
     function hideProgress() {
-      progressWrap.style.display = "none";
-      progressInner.style.width = "0%";
+      progressWrap.style.display = 'none';
+      progressInner.style.width = '0%';
     }
-    // --- END UTILITY ---
+    function finishActions(msg) {
+      playBeep();
+      vibrate();
+      notify(msg);
+      showFeedback(msg, false);
+    }
 
-    // --- PRESET LOGIC ---
-    function getPresets(timerType) {
-      try {
-        return JSON.parse(localStorage.getItem('timerPresets-' + timerType)) || [];
-      } catch { return []; }
-    }
-    function savePreset(timerType, name, data) {
-      let arr = getPresets(timerType);
-      arr = arr.filter(x => x.name !== name);
-      arr.unshift({name, data});
-      localStorage.setItem('timerPresets-' + timerType, JSON.stringify(arr.slice(0,6)));
-    }
-    function removePreset(timerType, name) {
-      let arr = getPresets(timerType);
-      arr = arr.filter(x => x.name !== name);
-      localStorage.setItem('timerPresets-' + timerType, JSON.stringify(arr));
-    }
-    function renderPresets(timerType, onLoad, onSave) {
-      const bar = document.getElementById('presetBar');
-      bar.innerHTML = '';
-      if (!['hiit','pomodoro','countdown'].includes(timerType)) { bar.style.display = "none"; return; }
-      bar.style.display = "block";
-      let arr = getPresets(timerType);
-      arr.forEach(p => {
-        let btn = document.createElement('button');
-        btn.innerHTML = `<i class="fa fa-star"></i> ${p.name}`;
-        btn.title = "Load preset";
-        btn.onclick = () => { onLoad(p.data); };
-        let delBtn = document.createElement('button');
-        delBtn.innerHTML = '<i class="fa fa-trash"></i>';
-        delBtn.title = "Delete preset";
-        delBtn.onclick = () => { removePreset(timerType, p.name); renderPresets(timerType, onLoad, onSave);}
-        bar.appendChild(btn);
-        bar.appendChild(delBtn);
-      });
-      // Save bar
-      let inp = document.createElement('input');
-      inp.type = "text"; inp.placeholder = "Preset name";
-      let saveBtn = document.createElement('button');
-      saveBtn.innerHTML = '<i class="fa fa-save"></i> Save';
-      saveBtn.onclick = () => { 
-        if (inp.value.trim()) onSave(inp.value.trim());
-        inp.value = '';
-        setTimeout(() => renderPresets(timerType, onLoad, onSave), 200);
-      };
-      bar.appendChild(inp);
-      bar.appendChild(saveBtn);
-    }
-    // --- END PRESETS ---
-
-    // --- INCREMENT/DECREMENT BUTTONS ---
-    function addIncDec(el, step=1, min=0, max=9999) {
-      // el: input element
-      const wrap = document.createElement('div');
-      wrap.className = 'input-row';
+    // --- INC/DEC BUTTONS ---
+    function addIncDec(el, step = 1, min = 1, max = 9999) {
+      if (!el || el.dataset.incdec) return;
+      el.dataset.incdec = "1";
+      const wrap = document.createElement('span');
+      wrap.style.display = 'inline-flex';
+      wrap.style.alignItems = 'center';
       const minus = document.createElement('button');
       minus.type = "button";
       minus.className = 'incdec-btn';
@@ -488,37 +378,14 @@
       };
       timerControls.appendChild(pauseBtn);
     }
-    function finishActions(msg) {
-      timerDisplay.textContent = msg;
-      playBeep();
-      vibrate();
-      notify(msg);
-      hideProgress();
-    }
 
     // --- TIMER RENDERERS ---
-    const timerMap = {
-      countdown: renderCountdown,
-      stopwatch: renderStopwatch,
-      hiit: renderHIIT,
-      pomodoro: renderPomodoro,
-      chess: renderChess,
-      event: renderEventCountdown,
-      tabata: renderTabata,
-      custom: renderCustomInterval,
-      presentation: renderPresentation,
-      breathing: renderBreathing,
-      soundloop: renderSoundLoop,
-    };
-
-    // COUNTDOWN
-    function renderCountdown(preset) {
+    function renderCountdown() {
       timerControls.innerHTML = '';
       clearTimer();
       hideProgress();
-      let defaultVal = preset ? preset.time : '';
-      const label = document.createElement('label'); label.textContent = "Time (e.g. 90, 1:30, 2m 10s):";
-      const input = document.createElement('input'); input.type = "text"; input.id = "countdownInput"; input.value = defaultVal;
+      const label = document.createElement('label'); label.textContent = "Duration (e.g. 1:30 or 90s):";
+      const input = document.createElement('input'); input.type = "text"; input.placeholder = "e.g. 90, 1:30, 2m 15s";
       addIncDec(input, 5, 1);
       const startBtn = document.createElement('button'); startBtn.innerHTML = '<i class="fa fa-play"></i>Start';
       timerControls.append(label, input, startBtn);
@@ -557,12 +424,8 @@
           }
         }, 1000);
       });
-      renderPresets("countdown", 
-        (data) => { input.value = data.time; }, 
-        (name) => { savePreset("countdown", name, {time: input.value}); });
     }
 
-    // STOPWATCH
     function renderStopwatch() {
       timerControls.innerHTML = '';
       clearTimer();
@@ -594,20 +457,19 @@
       };
     }
 
-    // HIIT
-    function renderHIIT(preset) {
+    function renderHIIT() {
       timerControls.innerHTML = '';
       clearTimer();
       hideProgress();
-      let vals = preset || {};
+      // Work, Rest, Rounds
       const labelW = document.createElement('label'); labelW.textContent = "Work (sec):";
-      const work = document.createElement('input'); work.type = "number"; work.min = 1; work.id = "hiitWork"; work.value = vals.work || '';
+      const work = document.createElement('input'); work.type = "number"; work.min = 1; work.value = 20;
       addIncDec(work, 5, 1);
       const labelR = document.createElement('label'); labelR.textContent = "Rest (sec):";
-      const rest = document.createElement('input'); rest.type = "number"; rest.min = 1; rest.id = "hiitRest"; rest.value = vals.rest || '';
+      const rest = document.createElement('input'); rest.type = "number"; rest.min = 1; rest.value = 10;
       addIncDec(rest, 5, 1);
       const labelN = document.createElement('label'); labelN.textContent = "Rounds:";
-      const rounds = document.createElement('input'); rounds.type = "number"; rounds.min = 1; rounds.id = "hiitRounds"; rounds.value = vals.rounds || '';
+      const rounds = document.createElement('input'); rounds.type = "number"; rounds.min = 1; rounds.value = 8;
       addIncDec(rounds, 1, 1);
       const startBtn = document.createElement('button'); startBtn.innerHTML = '<i class="fa fa-play"></i>Start';
       timerControls.append(labelW, work, labelR, rest, labelN, rounds, startBtn);
@@ -642,25 +504,20 @@
         () => 0, // For HIIT, not supporting accurate remain tracking in pause for now.
         () => { /* restart not supported for HIIT */ }
       );
-      renderPresets("hiit", 
-        (data) => { work.value = data.work; rest.value = data.rest; rounds.value = data.rounds; }, 
-        (name) => { savePreset("hiit", name, {work: work.value, rest: rest.value, rounds: rounds.value}); });
     }
 
-    // POMODORO
-    function renderPomodoro(preset) {
+    function renderPomodoro() {
       timerControls.innerHTML = '';
       clearTimer();
       hideProgress();
-      let vals = preset || {};
       const labelW = document.createElement('label'); labelW.textContent = "Work (min):";
-      const work = document.createElement('input'); work.type = "number"; work.min = 1; work.id = "pomoWork"; work.value = vals.work || '';
+      const work = document.createElement('input'); work.type = "number"; work.min = 1; work.value = 25;
       addIncDec(work, 1, 1);
       const labelB = document.createElement('label'); labelB.textContent = "Break (min):";
-      const rest = document.createElement('input'); rest.type = "number"; rest.min = 1; rest.id = "pomoBreak"; rest.value = vals.rest || '';
+      const rest = document.createElement('input'); rest.type = "number"; rest.min = 1; rest.value = 5;
       addIncDec(rest, 1, 1);
       const labelN = document.createElement('label'); labelN.textContent = "Rounds:";
-      const rounds = document.createElement('input'); rounds.type = "number"; rounds.min = 1; rounds.id = "pomoRounds"; rounds.value = vals.rounds || '';
+      const rounds = document.createElement('input'); rounds.type = "number"; rounds.min = 1; rounds.value = 4;
       addIncDec(rounds, 1, 1);
       const startBtn = document.createElement('button'); startBtn.innerHTML = '<i class="fa fa-play"></i>Start';
       timerControls.append(labelW, work, labelB, rest, labelN, rounds, startBtn);
@@ -692,20 +549,243 @@
         }, 1000);
       };
       setupPauseResume(
-        () => 0, // Not supporting pause-resume for Pomodoro remain tracking yet
-        () => { /* restart logic not supported */ }
+        () => 0, // For Pomodoro, not supporting accurate remain tracking in pause for now.
+        () => { /* restart not supported for Pomodoro */ }
       );
-      renderPresets("pomodoro", 
-        (data) => { work.value = data.work; rest.value = data.rest; rounds.value = data.rounds; }, 
-        (name) => { savePreset("pomodoro", name, {work: work.value, rest: rest.value, rounds: rounds.value}); });
     }
 
-    // The rest of the renderers (chess, event, tabata, custom, presentation, breathing, soundloop)
-    // ... (not shown here for brevity, but follow the above approach for each)
-    // They should be updated to:
-    // - Use progress bars for relevant timers
-    // - Add pause/resume using setupPauseResume
-    // - Play beep, vibrate, and notify on completion
+    function renderChess() {
+      timerControls.innerHTML = '';
+      clearTimer();
+      hideProgress();
+      // Player times, increments, and start
+      const labelA = document.createElement('label'); labelA.textContent = "Player 1 Time (min):";
+      const timeA = document.createElement('input'); timeA.type = "number"; timeA.min = 1; timeA.value = 5;
+      addIncDec(timeA, 1, 1);
+      const labelB = document.createElement('label'); labelB.textContent = "Player 2 Time (min):";
+      const timeB = document.createElement('input'); timeB.type = "number"; timeB.min = 1; timeB.value = 5;
+      addIncDec(timeB, 1, 1);
+      const labelIncr = document.createElement('label'); labelIncr.textContent = "Increment per move (sec):";
+      const incr = document.createElement('input'); incr.type = "number"; incr.min = 0; incr.value = 0;
+      addIncDec(incr, 1, 0);
+      const startBtn = document.createElement('button'); startBtn.innerHTML = '<i class="fa fa-play"></i>Start';
+      timerControls.append(labelA, timeA, labelB, timeB, labelIncr, incr, startBtn);
+      // For demo: just show settings, not full chess clock logic
+      startBtn.onclick = (e) => {
+        e.preventDefault();
+        showFeedback('Chess clock logic not implemented in demo.', true);
+      };
+    }
+
+    function renderEvent() {
+      timerControls.innerHTML = '';
+      clearTimer();
+      hideProgress();
+      const label = document.createElement('label'); label.textContent = "Event Time (YYYY-MM-DD HH:MM):";
+      const input = document.createElement('input'); input.type = "text"; input.placeholder = "2025-12-31 23:59";
+      const startBtn = document.createElement('button'); startBtn.innerHTML = '<i class="fa fa-play"></i>Start';
+      timerControls.append(label, input, startBtn);
+      startBtn.onclick = (e) => {
+        e.preventDefault();
+        let ts = Date.parse(input.value.replace(' ', 'T'));
+        if (isNaN(ts)) return showFeedback('Enter a valid date/time.', true);
+        let remain = Math.floor((ts - Date.now())/1000);
+        if (remain <= 0) return showFeedback('Event time must be in the future.', true);
+        showFeedback('');
+        clearTimer();
+        showProgress(1.0);
+        timer = setInterval(() => {
+          if (pauseState.paused) return;
+          remain = Math.floor((ts - Date.now())/1000);
+          timerDisplay.textContent = formatTime(remain);
+          showProgress(remain/(remain+1));
+          if (remain <= 0) {
+            clearTimer();
+            finishActions("Event reached!");
+          }
+        }, 1000);
+      };
+    }
+
+    function renderTabata() {
+      timerControls.innerHTML = '';
+      clearTimer();
+      hideProgress();
+      // Work, Rest, Rounds
+      const labelW = document.createElement('label'); labelW.textContent = "Work (sec):";
+      const work = document.createElement('input'); work.type = "number"; work.min = 1; work.value = 20;
+      addIncDec(work, 5, 1);
+      const labelR = document.createElement('label'); labelR.textContent = "Rest (sec):";
+      const rest = document.createElement('input'); rest.type = "number"; rest.min = 1; rest.value = 10;
+      addIncDec(rest, 5, 1);
+      const labelN = document.createElement('label'); labelN.textContent = "Rounds:";
+      const rounds = document.createElement('input'); rounds.type = "number"; rounds.min = 1; rounds.value = 8;
+      addIncDec(rounds, 1, 1);
+      const startBtn = document.createElement('button'); startBtn.innerHTML = '<i class="fa fa-play"></i>Start';
+      timerControls.append(labelW, work, labelR, rest, labelN, rounds, startBtn);
+      let total = 0, remain = 0, current = 1, mode = 'Work';
+      startBtn.onclick = (e) => {
+        e.preventDefault();
+        let w = parseInt(work.value,10), r = parseInt(rest.value,10), n = parseInt(rounds.value,10);
+        if ([w, r, n].some(v => isNaN(v) || v < 1))
+          return showFeedback('Enter valid positive numbers for work, rest, and rounds.', true);
+        showFeedback('');
+        total = n * (w + r);
+        remain = w;
+        current = 1;
+        mode = 'Work';
+        let roundRemain = w;
+        clearTimer();
+        showProgress(1.0);
+        timerDisplay.textContent = `Round ${current} - ${mode}: ${formatTime(roundRemain)}`;
+        timer = setInterval(() => {
+          if (pauseState.paused) return;
+          showProgress(((n-current)*w + (mode==='Work'?roundRemain:0))/((n*w)));
+          roundRemain--;
+          timerDisplay.textContent = `Round ${current} - ${mode}: ${formatTime(roundRemain)}`;
+          if (roundRemain < 1) {
+            if (mode === 'Work') { mode = 'Rest'; roundRemain = r; }
+            else if (++current > n) { clearTimer(); finishActions("Tabata complete!"); }
+            else { mode = 'Work'; roundRemain = w; }
+          }
+        }, 1000);
+      };
+    }
+
+    function renderCustom() {
+      timerControls.innerHTML = '';
+      clearTimer();
+      hideProgress();
+      const label = document.createElement('label'); label.textContent = "Custom Intervals (comma-separated seconds):";
+      const input = document.createElement('input'); input.type = "text"; input.placeholder = "10,20,10";
+      const startBtn = document.createElement('button'); startBtn.innerHTML = '<i class="fa fa-play"></i>Start';
+      timerControls.append(label, input, startBtn);
+      startBtn.onclick = (e) => {
+        e.preventDefault();
+        let arr = input.value.split(',').map(s=>parseInt(s.trim(),10));
+        if (!arr.length || arr.some(v=>isNaN(v)||v<1))
+          return showFeedback('Enter positive numbers separated by commas.', true);
+        showFeedback('');
+        let idx = 0, remain = arr[0];
+        clearTimer();
+        showProgress(1.0);
+        timer = setInterval(() => {
+          if (pauseState.paused) return;
+          remain--;
+          showProgress(remain/arr[idx]);
+          timerDisplay.textContent = `Interval ${idx+1}: ${formatTime(remain)}`;
+          if (remain <= 0) {
+            idx++;
+            if (idx >= arr.length) {
+              clearTimer();
+              finishActions("Custom intervals complete!");
+            } else {
+              remain = arr[idx];
+            }
+          }
+        }, 1000);
+      };
+    }
+
+    function renderPresentation() {
+      timerControls.innerHTML = '';
+      clearTimer();
+      hideProgress();
+      const label = document.createElement('label'); label.textContent = "Presentation Duration (min):";
+      const input = document.createElement('input'); input.type = "number"; input.min = 1; input.value = 10;
+      addIncDec(input, 1, 1);
+      const startBtn = document.createElement('button'); startBtn.innerHTML = '<i class="fa fa-play"></i>Start';
+      timerControls.append(label, input, startBtn);
+      startBtn.onclick = (e) => {
+        e.preventDefault();
+        let mins = parseInt(input.value,10);
+        if (isNaN(mins) || mins < 1) return showFeedback('Enter a valid number of minutes.', true);
+        let remain = mins * 60, total = remain;
+        showFeedback('');
+        clearTimer();
+        showProgress(1.0);
+        timer = setInterval(() => {
+          if (pauseState.paused) return;
+          remain--;
+          showProgress(remain/total);
+          timerDisplay.textContent = formatTime(remain);
+          if (remain <= 0) {
+            clearTimer();
+            finishActions("Presentation complete!");
+          }
+        }, 1000);
+      };
+    }
+
+    function renderBreathing() {
+      timerControls.innerHTML = '';
+      clearTimer();
+      hideProgress();
+      const label = document.createElement('label'); label.textContent = "Cycle (inhale, hold, exhale, hold) in sec (comma):";
+      const input = document.createElement('input'); input.type = "text"; input.placeholder = "4,7,8,0";
+      const startBtn = document.createElement('button'); startBtn.innerHTML = '<i class="fa fa-play"></i>Start';
+      timerControls.append(label, input, startBtn);
+      startBtn.onclick = (e) => {
+        e.preventDefault();
+        let arr = input.value.split(',').map(s=>parseInt(s.trim(),10));
+        if (arr.length < 3 || arr.some(v=>isNaN(v)||v<0))
+          return showFeedback('Enter at least 3 numbers (inhale, hold, exhale, [hold]).', true);
+        showFeedback('');
+        let idx = 0, remain = arr[0], phase = ['Inhale','Hold','Exhale','Hold'];
+        clearTimer();
+        showProgress(1.0);
+        timer = setInterval(() => {
+          if (pauseState.paused) return;
+          remain--;
+          showProgress(remain/(arr[idx]||1));
+          timerDisplay.textContent = `${phase[idx]}: ${formatTime(remain)}`;
+          if (remain <= 0) {
+            idx = (idx+1)%arr.length;
+            remain = arr[idx];
+          }
+        }, 1000);
+      };
+    }
+
+    function renderSoundloop() {
+      timerControls.innerHTML = '';
+      clearTimer();
+      hideProgress();
+      const label = document.createElement('label'); label.textContent = "Interval (sec):";
+      const input = document.createElement('input'); input.type = "number"; input.min = 1; input.value = 60;
+      addIncDec(input, 1, 1);
+      const startBtn = document.createElement('button'); startBtn.innerHTML = '<i class="fa fa-play"></i>Start';
+      timerControls.append(label, input, startBtn);
+      startBtn.onclick = (e) => {
+        e.preventDefault();
+        let secs = parseInt(input.value,10);
+        if (isNaN(secs) || secs < 1) return showFeedback('Enter a valid number of seconds.', true);
+        showFeedback('');
+        clearTimer();
+        showProgress(1.0);
+        timer = setInterval(() => {
+          if (pauseState.paused) return;
+          playBeep();
+          vibrate();
+          notify('Interval reached!');
+        }, secs*1000);
+      };
+    }
+
+    // --- TIMER MAP ---
+    const timerMap = {
+      countdown: renderCountdown,
+      stopwatch: renderStopwatch,
+      hiit: renderHIIT,
+      pomodoro: renderPomodoro,
+      chess: renderChess,
+      event: renderEvent,
+      tabata: renderTabata,
+      custom: renderCustom,
+      presentation: renderPresentation,
+      breathing: renderBreathing,
+      soundloop: renderSoundloop,
+    };
 
     // --- UNIVERSAL TIMER BOOTSTRAP ---
     timerTypeSelect.addEventListener('change', () => {
@@ -724,13 +804,12 @@
         timerDesc.textContent = '';
         return;
       }
-      timerMap[timerTypeSelect.value]();
+      // Call the right renderer for the timer type
+      if (timerMap[timerTypeSelect.value]) timerMap[timerTypeSelect.value]();
       timerDesc.textContent = timerDescriptions[timerTypeSelect.value] || '';
     });
-
     // On page load, show correct description if any selected
     if (timerTypeSelect.value) timerDesc.textContent = timerDescriptions[timerTypeSelect.value] || '';
-
   </script>
 </body>
 </html>
