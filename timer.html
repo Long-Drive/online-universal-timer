@@ -111,10 +111,31 @@
                 random: 'Random Timer'
             };
 
+            const timerMap = {
+                countdown: renderCountdown,
+                stopwatch: renderStopwatch,
+                hiit: renderHIIT,
+                pomodoro: renderPomodoro,
+                chess: renderChess,
+                event: renderEventCountdown,
+                tabata: renderTabata,
+                custom: renderCustomInterval,
+                presentation: renderPresentation,
+                breathing: renderBreathing,
+                soundloop: renderSoundLoop,
+                random: renderRandom
+            };
+
             const clearTimer = () => { if (timer) clearInterval(timer); timer = null; };
             const showFeedback = (msg, isError = false) => {
                 feedback.textContent = msg;
                 feedback.className = isError ? 'feedback error' : 'feedback';
+            };
+            const getDurationInSeconds = (value, unit) => {
+                if (unit === 'minutes') {
+                    return value * 60;
+                }
+                return value;
             };
 
             if (selectedTimerType && timerMap[selectedTimerType]) {
@@ -128,15 +149,21 @@
 
             // Countdown Timer
             function renderCountdown() {
-                timerDisplay.textContent = 'Enter a time to begin';
+                timerDisplay.textContent = 'Enter the time for your countdown and select the unit.';
                 timerControls.innerHTML = `
-                    <label for="countdownInput">Seconds:</label>
+                    <label for="countdownInput">Time:</label>
                     <input type="number" id="countdownInput" min="1" required>
+                    <select id="countdownUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes">Minutes</option>
+                    </select>
                     <button id="startCountdown"><i class="fa fa-play"></i>Start</button>`;
                 document.getElementById('startCountdown').addEventListener('click', (e) => {
                     e.preventDefault();
-                    let time = parseInt(document.getElementById('countdownInput').value, 10);
-                    if (isNaN(time) || time < 1) return showFeedback('Please enter a valid number of seconds.', true);
+                    let value = parseInt(document.getElementById('countdownInput').value, 10);
+                    let unit = document.getElementById('countdownUnit').value;
+                    let time = getDurationInSeconds(value, unit);
+                    if (isNaN(time) || time < 1) return showFeedback('Please enter a valid positive number.', true);
                     showFeedback('');
                     clearTimer();
                     timerDisplay.textContent = `${time}s`;
@@ -149,7 +176,7 @@
 
             // Stopwatch
             function renderStopwatch() {
-                timerDisplay.textContent = '0s';
+                timerDisplay.textContent = 'Click "Start" to begin timing.';
                 timerControls.innerHTML = `
                     <button id="startStopwatch"><i class="fa fa-play"></i>Start</button>
                     <button id="pauseStopwatch"><i class="fa fa-pause"></i>Pause</button>
@@ -175,24 +202,38 @@
 
             // HIIT Timer
             function renderHIIT() {
-                timerDisplay.textContent = 'Set your intervals and rounds to begin';
+                timerDisplay.textContent = 'Enter the duration for your work and rest periods, and the number of rounds, then click \'Start\'.';
                 timerControls.innerHTML = `
-                    <label>Work (sec):</label><input type="number" id="hiitWork" min="1">
-                    <label>Rest (sec):</label><input type="number" id="hiitRest" min="1">
+                    <label>Work:</label><input type="number" id="hiitWork" min="1">
+                    <select id="hiitWorkUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes">Minutes</option>
+                    </select>
+                    <label>Rest:</label><input type="number" id="hiitRest" min="1">
+                    <select id="hiitRestUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes">Minutes</option>
+                    </select>
                     <label>Rounds:</label><input type="number" id="hiitRounds" min="1">
                     <button id="startHIIT"><i class="fa fa-play"></i>Start</button>`;
                 document.getElementById('startHIIT').addEventListener('click', (e) => {
                     e.preventDefault();
-                    let work = parseInt(document.getElementById('hiitWork').value, 10);
-                    let rest = parseInt(document.getElementById('hiitRest').value, 10);
+                    let workValue = parseInt(document.getElementById('hiitWork').value, 10);
+                    let workUnit = document.getElementById('hiitWorkUnit').value;
+                    let restValue = parseInt(document.getElementById('hiitRest').value, 10);
+                    let restUnit = document.getElementById('hiitRestUnit').value;
                     let rounds = parseInt(document.getElementById('hiitRounds').value, 10);
+                    
+                    let work = getDurationInSeconds(workValue, workUnit);
+                    let rest = getDurationInSeconds(restValue, restUnit);
+
                     if ([work, rest, rounds].some(v => isNaN(v) || v < 1))
                         return showFeedback('Please enter valid positive numbers for work, rest, and rounds.', true);
                     showFeedback('');
                     let current = 1, mode = 'Work', time = work;
                     clearTimer();
                     timer = setInterval(() => {
-                        timerDisplay.textContent = `Round ${current} - ${mode}: ${time}s`;
+                        timerDisplay.textContent = `Round ${current} - ${mode}: ${Math.floor(time/60)}m ${time%60}s`;
                         if (time-- < 1) {
                             if (mode === 'Work') { mode = 'Rest'; time = rest; }
                             else if (++current > rounds) { clearTimer(); timerDisplay.textContent = "HIIT complete!"; }
@@ -204,17 +245,31 @@
 
             // Pomodoro Timer
             function renderPomodoro() {
-                timerDisplay.textContent = 'Set your work and break times to begin';
+                timerDisplay.textContent = 'Enter the duration for your work and break periods, and the number of rounds, then click \'Start\'.';
                 timerControls.innerHTML = `
-                    <label>Work (min):</label><input type="number" id="pomodoroWork" min="1">
-                    <label>Rest (min):</label><input type="number" id="pomodoroRest" min="1">
+                    <label>Work:</label><input type="number" id="pomodoroWork" min="1">
+                    <select id="pomodoroWorkUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes">Minutes</option>
+                    </select>
+                    <label>Rest:</label><input type="number" id="pomodoroRest" min="1">
+                    <select id="pomodoroRestUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes">Minutes</option>
+                    </select>
                     <label>Rounds:</label><input type="number" id="pomodoroRounds" min="1">
                     <button id="startPomodoro"><i class="fa fa-play"></i>Start</button>`;
                 document.getElementById('startPomodoro').addEventListener('click', (e) => {
                     e.preventDefault();
-                    let work = parseInt(document.getElementById('pomodoroWork').value, 10) * 60;
-                    let rest = parseInt(document.getElementById('pomodoroRest').value, 10) * 60;
+                    let workValue = parseInt(document.getElementById('pomodoroWork').value, 10);
+                    let workUnit = document.getElementById('pomodoroWorkUnit').value;
+                    let restValue = parseInt(document.getElementById('pomodoroRest').value, 10);
+                    let restUnit = document.getElementById('pomodoroRestUnit').value;
                     let rounds = parseInt(document.getElementById('pomodoroRounds').value, 10);
+                    
+                    let work = getDurationInSeconds(workValue, workUnit);
+                    let rest = getDurationInSeconds(restValue, restUnit);
+
                     if ([work, rest, rounds].some(v => isNaN(v) || v < 1))
                         return showFeedback('Please enter valid values.', true);
                     showFeedback('');
@@ -233,20 +288,26 @@
 
             // Chess Clock
             function renderChess() {
-                timerDisplay.textContent = 'Set the time and start the clock';
+                timerDisplay.textContent = 'Enter the time for each player and select the unit.';
                 timerControls.innerHTML = `
-                    <label>Minutes per player:</label>
+                    <label>Time per player:</label>
                     <input type="number" id="chessTime" min="1">
+                    <select id="chessTimeUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes" selected>Minutes</option>
+                    </select>
                     <button id="startChess"><i class="fa fa-play"></i>Start</button>
                     <button id="switchBtn" disabled><i class="fa fa-rotate"></i> Switch Player</button>
                 `;
                 chess = {active: null, times: [0,0], intervals: [null,null], running: false};
                 document.getElementById('startChess').addEventListener('click', (e) => {
                     e.preventDefault();
-                    let mins = parseInt(document.getElementById('chessTime').value, 10);
-                    if (isNaN(mins) || mins < 1) return showFeedback('Please enter minutes for each player.', true);
+                    let value = parseInt(document.getElementById('chessTime').value, 10);
+                    let unit = document.getElementById('chessTimeUnit').value;
+                    let totalTime = getDurationInSeconds(value, unit);
+                    if (isNaN(totalTime) || totalTime < 1) return showFeedback('Please enter a valid positive number.', true);
                     showFeedback('');
-                    chess.times = [mins*60, mins*60];
+                    chess.times = [totalTime, totalTime];
                     chess.active = 0;
                     chess.running = true;
                     document.getElementById('switchBtn').disabled = false;
@@ -281,7 +342,7 @@
 
             // Event Countdown
             function renderEventCountdown() {
-                timerDisplay.textContent = 'Select a date and time to begin';
+                timerDisplay.textContent = 'Select a date and time in the future for the countdown to begin.';
                 timerControls.innerHTML = `
                     <label>Date & time:</label>
                     <input type="datetime-local" id="eventTime">
@@ -304,24 +365,38 @@
 
             // Tabata Timer
             function renderTabata() {
-                timerDisplay.textContent = 'Set your intervals and rounds to begin';
+                timerDisplay.textContent = 'Enter the duration for your work and rest periods, and the number of rounds, then click \'Start\'. Default values for Tabata are 20s work, 10s rest, and 8 rounds.';
                 timerControls.innerHTML = `
-                    <label>Work (sec):</label><input type="number" id="tabataWork" min="1" value="20">
-                    <label>Rest (sec):</label><input type="number" id="tabataRest" min="1" value="10">
+                    <label>Work:</label><input type="number" id="tabataWork" min="1" value="20">
+                    <select id="tabataWorkUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes">Minutes</option>
+                    </select>
+                    <label>Rest:</label><input type="number" id="tabataRest" min="1" value="10">
+                    <select id="tabataRestUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes">Minutes</option>
+                    </select>
                     <label>Rounds:</label><input type="number" id="tabataRounds" min="1" value="8">
                     <button id="startTabata"><i class="fa fa-play"></i>Start</button>`;
                 document.getElementById('startTabata').addEventListener('click', (e) => {
                     e.preventDefault();
-                    let work = parseInt(document.getElementById('tabataWork').value, 10);
-                    let rest = parseInt(document.getElementById('tabataRest').value, 10);
+                    let workValue = parseInt(document.getElementById('tabataWork').value, 10);
+                    let workUnit = document.getElementById('tabataWorkUnit').value;
+                    let restValue = parseInt(document.getElementById('tabataRest').value, 10);
+                    let restUnit = document.getElementById('tabataRestUnit').value;
                     let rounds = parseInt(document.getElementById('tabataRounds').value, 10);
+                    
+                    let work = getDurationInSeconds(workValue, workUnit);
+                    let rest = getDurationInSeconds(restValue, restUnit);
+                    
                     if ([work, rest, rounds].some(v => isNaN(v) || v < 1))
                         return showFeedback('Please enter valid values.', true);
                     showFeedback('');
                     let current = 1, mode = 'Work', time = work;
                     clearTimer();
                     timer = setInterval(() => {
-                        timerDisplay.textContent = `Round ${current} - ${mode}: ${time}s`;
+                        timerDisplay.textContent = `Round ${current} - ${mode}: ${Math.floor(time/60)}m ${time%60}s`;
                         if (time-- < 1) {
                             if (mode === 'Work') { mode = 'Rest'; time = rest; }
                             else if (++current > rounds) { clearTimer(); timerDisplay.textContent = "Tabata complete!"; }
@@ -333,21 +408,27 @@
 
             // Custom Interval Timer
             function renderCustomInterval() {
-                timerDisplay.textContent = 'Enter a comma-separated list of seconds to begin';
+                timerDisplay.textContent = 'Enter a comma-separated list of positive numbers for your intervals and select the unit.';
                 timerControls.innerHTML = `
                     <label>Pattern (e.g. 10,5,10):</label>
                     <input type="text" id="customPattern">
+                    <select id="customPatternUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes">Minutes</option>
+                    </select>
                     <button id="startCustomInterval"><i class="fa fa-play"></i>Start</button>`;
                 document.getElementById('startCustomInterval').addEventListener('click', (e) => {
                     e.preventDefault();
-                    let pattern = document.getElementById('customPattern').value.split(',').map(x=>parseInt(x.trim(),10));
+                    let unit = document.getElementById('customPatternUnit').value;
+                    let patternValues = document.getElementById('customPattern').value.split(',').map(x=>parseInt(x.trim(),10));
+                    let pattern = patternValues.map(v => getDurationInSeconds(v, unit));
                     if (!pattern.length || pattern.some(isNaN) || pattern.some(x=>x<1))
-                        return showFeedback('Enter a comma-separated list of positive numbers for seconds.', true);
+                        return showFeedback('Enter a comma-separated list of positive numbers for your intervals.', true);
                     showFeedback('');
                     let idx = 0, time = pattern[0];
                     clearTimer();
                     timer = setInterval(() => {
-                        timerDisplay.textContent = `Interval ${idx+1}: ${time}s`;
+                        timerDisplay.textContent = `Interval ${idx+1}: ${Math.floor(time/60)}m ${time%60}s`;
                         if (time-- < 1) {
                             if (++idx >= pattern.length) { clearTimer(); timerDisplay.textContent = "Custom intervals complete!"; }
                             else time = pattern[idx];
@@ -358,15 +439,21 @@
 
             // Presentation Timer
             function renderPresentation() {
-                timerDisplay.textContent = 'Set total minutes for your presentation';
+                timerDisplay.textContent = 'Enter the total time for your presentation and select the unit.';
                 timerControls.innerHTML = `
-                    <label>Total minutes:</label>
+                    <label>Total time:</label>
                     <input type="number" id="presTime" min="1">
+                    <select id="presTimeUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes" selected>Minutes</option>
+                    </select>
                     <button id="startPresentation"><i class="fa fa-play"></i>Start</button>`;
                 document.getElementById('startPresentation').addEventListener('click', (e) => {
                     e.preventDefault();
-                    let time = parseInt(document.getElementById('presTime').value, 10) * 60;
-                    if (isNaN(time) || time < 1) return showFeedback('Enter total minutes.', true);
+                    let value = parseInt(document.getElementById('presTime').value, 10);
+                    let unit = document.getElementById('presTimeUnit').value;
+                    let time = getDurationInSeconds(value, unit);
+                    if (isNaN(time) || time < 1) return showFeedback('Enter a valid positive number.', true);
                     showFeedback('');
                     clearTimer();
                     timer = setInterval(() => {
@@ -378,19 +465,39 @@
 
             // Breathing Timer
             function renderBreathing() {
-                timerDisplay.textContent = 'Set your breathing cycles and times';
+                timerDisplay.textContent = 'Enter the duration for your inhale, optional hold, and exhale periods, and the number of cycles, then click \'Start\'.';
                 timerControls.innerHTML = `
-                    <label>Inhale (sec):</label><input type="number" id="inhale" min="1">
-                    <label>Hold (sec):</label><input type="number" id="hold" min="0">
-                    <label>Exhale (sec):</label><input type="number" id="exhale" min="1">
+                    <label>Inhale:</label><input type="number" id="inhale" min="1">
+                    <select id="inhaleUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes">Minutes</option>
+                    </select>
+                    <label>Hold:</label><input type="number" id="hold" min="0">
+                    <select id="holdUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes">Minutes</option>
+                    </select>
+                    <label>Exhale:</label><input type="number" id="exhale" min="1">
+                    <select id="exhaleUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes">Minutes</option>
+                    </select>
                     <label>Cycles:</label><input type="number" id="cycles" min="1">
                     <button id="startBreathing"><i class="fa fa-play"></i>Start</button>`;
                 document.getElementById('startBreathing').addEventListener('click', (e) => {
                     e.preventDefault();
-                    let inhale = parseInt(document.getElementById('inhale').value, 10);
-                    let hold = parseInt(document.getElementById('hold').value, 10);
-                    let exhale = parseInt(document.getElementById('exhale').value, 10);
+                    let inhaleValue = parseInt(document.getElementById('inhale').value, 10);
+                    let inhaleUnit = document.getElementById('inhaleUnit').value;
+                    let holdValue = parseInt(document.getElementById('hold').value, 10);
+                    let holdUnit = document.getElementById('holdUnit').value;
+                    let exhaleValue = parseInt(document.getElementById('exhale').value, 10);
+                    let exhaleUnit = document.getElementById('exhaleUnit').value;
                     let cycles = parseInt(document.getElementById('cycles').value, 10);
+                    
+                    let inhale = getDurationInSeconds(inhaleValue, inhaleUnit);
+                    let hold = getDurationInSeconds(holdValue, holdUnit);
+                    let exhale = getDurationInSeconds(exhaleValue, exhaleUnit);
+                    
                     if ([inhale, hold, exhale, cycles].some(v=>isNaN(v)||v<0) || inhale < 1 || exhale < 1 || cycles < 1)
                         return showFeedback('Enter valid numbers.', true);
                     showFeedback('');
@@ -403,7 +510,7 @@
                     let idx = 0, t = steps[0].time;
                     clearTimer();
                     timer = setInterval(()=>{
-                        timerDisplay.textContent = `${steps[idx].label}: ${t}s`;
+                        timerDisplay.textContent = `${steps[idx].label}: ${Math.floor(t/60)}m ${t%60}s`;
                         if(t-- < 1){
                             if(++idx>=steps.length){clearTimer();timerDisplay.textContent="Breathing complete!";return;}
                             t = steps[idx].time;
@@ -414,17 +521,25 @@
 
             // Repeating Sound Timer
             function renderSoundLoop() {
-                timerDisplay.textContent = 'Set the interval and number of repeats';
+                timerDisplay.textContent = 'Enter the interval and number of repeats, then select the unit for the interval.';
                 timerControls.innerHTML = `
-                    <label>Interval (sec):</label>
+                    <label>Interval:</label>
                     <input type="number" id="soundInterval" min="1">
+                    <select id="soundIntervalUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes">Minutes</option>
+                    </select>
                     <label>Repeats:</label>
                     <input type="number" id="soundRepeats" min="1">
                     <button id="startSoundLoop"><i class="fa fa-play"></i>Start</button>`;
                 document.getElementById('startSoundLoop').addEventListener('click', (e) => {
                     e.preventDefault();
-                    let interval = parseInt(document.getElementById('soundInterval').value, 10);
+                    let intervalValue = parseInt(document.getElementById('soundInterval').value, 10);
+                    let intervalUnit = document.getElementById('soundIntervalUnit').value;
                     let repeats = parseInt(document.getElementById('soundRepeats').value, 10);
+                    
+                    let interval = getDurationInSeconds(intervalValue, intervalUnit);
+                    
                     if (isNaN(interval)||interval<1||isNaN(repeats)||repeats<1)
                         return showFeedback('Enter valid values.', true);
                     showFeedback('');
@@ -438,23 +553,32 @@
                 });
             }
 
-            // Random Timer (updated to count down)
+            // Random Timer
             function renderRandom() {
-                timerDisplay.textContent = 'Set the range and rounds for a random timer';
+                timerDisplay.textContent = 'Enter the range and rounds for a random timer and select the unit.';
                 timerControls.innerHTML = `
-                    <label>Min Interval (sec):</label>
+                    <label>Min Interval:</label>
                     <input type="number" id="randomMin" min="1" value="5">
-                    <label>Max Interval (sec):</label>
+                    <label>Max Interval:</label>
                     <input type="number" id="randomMax" min="1" value="30">
+                    <select id="randomUnit">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes">Minutes</option>
+                    </select>
                     <label>Rounds:</label>
                     <input type="number" id="randomRounds" min="1" value="5">
                     <button id="startRandom"><i class="fa fa-play"></i>Start</button>
                 `;
                 document.getElementById('startRandom').addEventListener('click', (e) => {
                     e.preventDefault();
-                    let min = parseInt(document.getElementById('randomMin').value, 10);
-                    let max = parseInt(document.getElementById('randomMax').value, 10);
+                    let minValue = parseInt(document.getElementById('randomMin').value, 10);
+                    let maxValue = parseInt(document.getElementById('randomMax').value, 10);
+                    let unit = document.getElementById('randomUnit').value;
                     let rounds = parseInt(document.getElementById('randomRounds').value, 10);
+                    
+                    let min = getDurationInSeconds(minValue, unit);
+                    let max = getDurationInSeconds(maxValue, unit);
+                    
                     if ([min, max, rounds].some(v => isNaN(v) || v < 1) || min > max) {
                         return showFeedback('Enter valid min/max (min ≤ max) and rounds.', true);
                     }
@@ -470,13 +594,13 @@
                         let duration = Math.floor(Math.random()*(max-min+1)) + min;
                         let timeLeft = duration;
 
-                        timerDisplay.textContent = `Round ${current}/${rounds}: ${timeLeft}s`;
+                        timerDisplay.textContent = `Round ${current}/${rounds}: ${Math.floor(timeLeft/60)}m ${timeLeft%60}s`;
 
                         clearTimer();
                         timer = setInterval(() => {
                             timeLeft--;
                             if (timeLeft > 0) {
-                                timerDisplay.textContent = `Round ${current}/${rounds}: ${timeLeft}s`;
+                                timerDisplay.textContent = `Round ${current}/${rounds}: ${Math.floor(timeLeft/60)}m ${timeLeft%60}s`;
                             } else {
                                 clearTimer();
                                 timerDisplay.textContent = `Round ${current}/${rounds}: Surprise!`;
@@ -492,21 +616,6 @@
                     startRandomInterval();
                 });
             }
-
-            const timerMap = {
-                countdown: renderCountdown,
-                stopwatch: renderStopwatch,
-                hiit: renderHIIT,
-                pomodoro: renderPomodoro,
-                chess: renderChess,
-                event: renderEventCountdown,
-                tabata: renderTabata,
-                custom: renderCustomInterval,
-                presentation: renderPresentation,
-                breathing: renderBreathing,
-                soundloop: renderSoundLoop,
-                random: renderRandom
-            };
         });
     </script>
 </body>
